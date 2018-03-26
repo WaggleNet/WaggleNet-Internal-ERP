@@ -11,10 +11,10 @@ def verify_user_token(token):
     s = Serializer(current_app.config['SECRET_KEY'])
     try:
         data = s.loads(token)
-    except SignatureExpired or BadSignature:
+    except (SignatureExpired, BadSignature):
         return None
     user = User.query.get(data['user_id'])
-    g.user = jsonify(user)
+    g.user = user
     return user
 
 
@@ -24,6 +24,7 @@ def authenticate(token_or_username, password):
         return True
     user = User.query.filter_by(username=token_or_username).first()
     if user and bcrypt.check_password_hash(user.password, password):
+        g.user = user
         return True
     return False
 
@@ -88,7 +89,7 @@ def reset_user_password(user_id):
 @blueprint.route('/login')
 @auth.login_required
 def handle_login():
-    token = generate_user_token(g.user['user_id'])
+    token = generate_user_token(g.user.id)
     return jsonify(status='ok', token=token.decode('ascii'), user=g.user)
 
 
@@ -100,7 +101,7 @@ def handle_register():
     password = form.get('password')
     if inv_code is None: abort(400)
     user = User.query.filter_by(inv_code=inv_code, username=username).first_or_404()
-    user.password = bcrypt.generate_password_hash(password)
+    user.password = bcrypt.generate_password_hash(password).decode('utf-8')
     user.inv_code = None
     db.session.commit()
     return jsonify(status='ok', user_id=user.id)
