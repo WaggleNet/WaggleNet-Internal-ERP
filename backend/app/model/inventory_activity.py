@@ -1,6 +1,6 @@
 from .db import db
-from ..utils.uuid import gen_uuid
 from enum import Enum
+from ..services.generate_id import generate_uuid
 
 class InventoryActivityType(Enum):
     create = 0
@@ -17,7 +17,7 @@ class InventoryActivity(db.Model):
     - Date updated
     """
     __tablename__ = 'inventory_activity'
-    id = db.Column(db.String(40), primary_key=True, default=gen_uuid)
+    id = db.Column(db.String(40), primary_key=True, default=generate_uuid)
     asset_id = db.Column(db.String(40), db.ForeignKey('asset.id'))
     asset = db.relationship('Asset', backref='activities')
     inventory_id = db.Column(db.String(40), db.ForeignKey('inventory.id'))

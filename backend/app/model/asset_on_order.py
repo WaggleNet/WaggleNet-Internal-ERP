@@ -1,5 +1,5 @@
 from .db import db
-from ..utils.uuid import gen_uuid
+from app.services.generate_id import generate_uuid
 
 
 class AssetOnOrder(db.Model):
@@ -9,7 +9,7 @@ class AssetOnOrder(db.Model):
     nonconsumable asset should have a tag associated to each unit.
     """
     __tablename__ = 'asset_on_order'
-    id = db.Column(db.String(40), primary_key=True, default=gen_uuid)
+    id = db.Column(db.String(40), primary_key=True, default=generate_uuid)
     asset_id = db.Column(db.String(40), db.ForeignKey('asset.id'))
     asset = db.relationship('Asset', backref='onorder')
     order_id = db.Column(db.String(40), db.ForeignKey('order.id'))

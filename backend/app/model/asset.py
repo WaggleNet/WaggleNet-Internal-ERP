@@ -1,5 +1,5 @@
 from .db import db
-from ..utils.uuid import gen_uuid
+from app.services.generate_id import generate_uuid
 from enum import Enum
 
 class AssetStatus(Enum):
@@ -13,7 +13,7 @@ class Asset(db.Model):
     """
     Stores stocking units that have an Asset tag.
     """
-    id = db.Column(db.String(40), primary_key=True, default=gen_uuid)
+    id = db.Column(db.String(40), primary_key=True, default=generate_uuid)
     inventory_id = db.Column(db.String(40), db.ForeignKey('inventory.id'))
     inventory = db.relationship('Inventory', backref='assets')
     status = db.Column(db.Enum(AssetStatus), index=True, default=AssetStatus.pending)

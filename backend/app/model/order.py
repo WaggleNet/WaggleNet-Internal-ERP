@@ -1,5 +1,5 @@
 from .db import db
-from ..utils.uuid import gen_uuid
+from app.services.generate_id import generate_uuid
 from enum import Enum
 
 
@@ -17,14 +17,15 @@ class Order(db.Model):
 
     Shopping List Schema:
     	○ Order Source
-		○ Status
+		○ Status: pending, accepted, rejected
+		○ User ID
 		○ (F) Inventory ID (if replenishes)
 		○ Stocking Qty
 		○ MOQ
 		○ Order qty
 		○ Non-inventory orders (service fees, shipping)
     """
-    id = db.Column(db.String(40), primary_key=True, default=gen_uuid)
+    id = db.Column(db.String(40), primary_key=True, default=generate_uuid)
     status = db.Column(db.Enum(OrderStatus), index=True, default=OrderStatus.pending)
     created = db.Column(db.DateTime, index=True)
     updated = db.Column(db.DateTime, index=True)
